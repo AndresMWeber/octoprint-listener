@@ -1,3 +1,5 @@
+'use strict';
+
 const Responses = require("./utils/apiResponses");
 const Debug = require("debug");
 const debug = Debug("handlers:getUser");

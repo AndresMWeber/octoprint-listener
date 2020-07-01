@@ -10,6 +10,14 @@
 #    docs.serverless.com
 #
 # Happy Coding!
+plugins:
+  - serverless-offline
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: octoprint-listener-snapshot-bucket
+      localDir: ./upload
 
 service: aw-octoprint-listener
 org: andresmweber
@@ -32,24 +40,24 @@ stage: dev
 region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
-#  iamRoleStatements:
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:ListBucket"
-#      Resource: { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref" : "ServerlessDeploymentBucket" } ] ]  }
-#    - Effect: "Allow"
-#      Action:
-#        - "s3:PutObject"
-#      Resource:
-#        Fn::Join:
-#          - ""
-#          - - "arn:aws:s3:::"
-#            - "Ref" : "ServerlessDeploymentBucket"
-#            - "/*"
+iamRoleStatements:
+  - Effect: "Allow"
+    Action:
+      - "s3:ListBucket"
+    Resource: { "Fn::Join": ["", ["arn:aws:s3:::", { "Ref": "OctoprintSnapshotBucket" }]] }
+  - Effect: "Allow"
+    Action:
+      - "s3:PutObject"
+    Resource:
+      Fn::Join:
+        - ""
+        - - "arn:aws:s3:::"
+          - "Ref": "OctoprintSnapshotBucket"
+          - "/*"
 
 # you can define service wide environment variables here
-#  environment:
-#    variable1: value1
+environment:
+  SNAPSHOT_BUCKET: !Ref OctoprintSnapshotBucket
 
 # you can add packaging information here
 #package:
@@ -61,6 +69,13 @@ region: us-east-1
 #    - exclude-me-dir/**
 
 functions:
+  receiveWebhook:
+    handler: lambdas/receiveWebhook.handler
+    events:
+      - http:
+          path: webook
+          method: POST
+          cors: true
   getUser:
     handler: lambdas/getUser.handler
     events:
@@ -68,7 +83,6 @@ functions:
           path: get-user/{ID}
           method: GET
           cors: true
-
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details
@@ -110,13 +124,13 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-#resources:
-#  Resources:
-#    NewResource:
-#      Type: AWS::S3::Bucket
-#      Properties:
-#        BucketName: my-new-bucket
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
+resources:
+  Resources:
+    OctoprintSnapshotBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: octoprint-listener-snapshot-bucket
+  Outputs:
+    NewOutput:
+      Description: "Description for the output"
+      Value: "Some output value"
