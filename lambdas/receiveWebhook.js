@@ -93,5 +93,5 @@ module.exports.handler = async event => {
   }
   const response = await axios.post(SLACK_URL, payload);
 
-  return Responses._200({ response, message });
+  return Responses._200({ message });
 };

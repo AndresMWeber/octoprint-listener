@@ -9,21 +9,21 @@ const Responses = {
     return {
       headers: { ...CommonHeaders },
       statusCode: 200,
-      body: JSON.stringify(data, null, 2)
+      body: data
     };
   },
   _404(data = {}) {
     return {
       headers: { ...CommonHeaders },
       statusCode: 404,
-      body: JSON.stringify(data, null, 2)
+      body: data
     };
   },
   _400(data = {}) {
     return {
       headers: { ...CommonHeaders },
       statusCode: 400,
-      body: JSON.stringify(data, null, 2)
+      body: data
     };
   }
 };
