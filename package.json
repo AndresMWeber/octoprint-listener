@@ -18,7 +18,7 @@
     "serverless-s3-sync": "^1.14.3"
   },
   "scripts": {
-    "test": "./node_modules/.bin/jest",
+    "test": "./node_modules/.bin/jest --env=node",
     "sls-test": "serverless-bundle test"
   },
   "repository": {
