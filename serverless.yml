@@ -17,7 +17,7 @@ plugins:
 custom:
   s3Sync:
     - bucketName: octoprint-listener-snapshot-bucket
-      localDir: ./upload
+      localDir: upload
 
 service: aw-octoprint-listener
 org: andresmweber
