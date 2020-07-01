@@ -1,8 +1,7 @@
-"use strict";
 const Debug = require("debug");
 const { S3, SecretsManager } = require("aws-sdk");
 const Responses = require("./utils/apiResponses");
-const axios = require('axios')
+const axios = require("axios");
 
 const params = { region: "us-east-1" };
 const secrets = new SecretsManager(params);
@@ -25,17 +24,17 @@ const uploadImageAndAddUrl = async event => {
   if (event.snapshot) {
     const snapshotBuffer = event.snapshot;
 
-    response = await s3.putObject({
+    const response = await s3.putObject({
       Bucket,
       Key,
-      Body: btoa(snapshotBuffer),
+      Body: Buffer.from(snapshotBuffer, "base64").toString(),
       ContentType: "image/jpeg",
       ACL: "public-read"
     });
 
-    if (response.ResponseMetadata?.HTTPStatusCode === 200) {
-      url = "https://{BUCKET}.s3.amazonaws.com/{KEY}";
-      print("Successfully uploaded image to s3: {url}");
+    if (response.ResponseMetadata && response.ResponseMetadata.HTTPStatusCode === 200) {
+      const url = "https://{BUCKET}.s3.amazonaws.com/{KEY}";
+      debug(`Successfully uploaded image to s3: ${url}`);
       return { url: url, thumb_url: url };
     }
   }
@@ -75,8 +74,7 @@ module.exports.handler = async event => {
 
   const image_urls = await uploadImageAndAddUrl(event);
   const SLACK_URL =
-    WEBHOOK_URL +
-    (await secrets.getSecretValue({ SecretId: "AWCREDS" })["AW-SLACK"]);
+    WEBHOOK_URL + (await secrets.getSecretValue({ SecretId: "AWCREDS" })["AW-SLACK"]);
 
   const payload = { ...MESSAGE_PAYLOAD };
   payload.headers = { "Content-Type": "application/json" };

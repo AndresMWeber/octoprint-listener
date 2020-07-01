@@ -1,0 +1,11 @@
+- name: says hello to the world by default
+  endpoint: {function: hello}
+  response:
+    body: "Hello, world"
+- name: Receives webhook
+  endpoint: {function: receiveWebhook}
+  request:
+    body:
+      name: alice
+  response:
+    body: "Hello, alice"

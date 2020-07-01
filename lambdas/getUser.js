@@ -1,13 +1,11 @@
-'use strict';
-
 const Responses = require("./utils/apiResponses");
 const Debug = require("debug");
 const debug = Debug("handlers:getUser");
 
 const users = {
   1: { name: "Anna", age: 25, job: "preacher" },
-  1: { name: "Kevin", age: 65, job: "reacher" },
-  1: { name: "Bob", age: 43, job: "teacher" }
+  2: { name: "Kevin", age: 65, job: "reacher" },
+  3: { name: "Bob", age: 43, job: "teacher" }
 };
 exports.handler = async event => {
   debug("event: %o", event);

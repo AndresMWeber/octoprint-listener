@@ -9,11 +9,17 @@
   },
   "devDependencies": {
     "aws-sdk": "^2.708.0",
+    "jest": "^26.1.0",
+    "serverless-bundle": "^1.8.0",
+    "serverless-dotenv-plugin": "^2.4.2",
     "serverless-offline": "^6.4.0",
+    "serverless-plugin-existing-s3": "^2.4.0",
+    "serverless-plugin-git-variables": "^4.0.0",
     "serverless-s3-sync": "^1.14.3"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "./node_modules/.bin/jest",
+    "sls-test": "serverless-bundle test"
   },
   "repository": {
     "type": "git",
