@@ -1,0 +1,28 @@
+{
+  "name": "aw-octoprint-listener",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "axios": "^0.19.2",
+    "debug": "^4.1.1"
+  },
+  "devDependencies": {
+    "aws-sdk": "^2.708.0",
+    "serverless-offline": "^6.4.0",
+    "serverless-s3-sync": "^1.14.3"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndresMWeber/octoprint-listener.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AndresMWeber/octoprint-listener/issues"
+  },
+  "homepage": "https://github.com/AndresMWeber/octoprint-listener#readme"
+}

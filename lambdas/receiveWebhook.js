@@ -2,6 +2,7 @@
 const Debug = require("debug");
 const { S3, SecretsManager } = require("aws-sdk");
 const Responses = require("./utils/apiResponses");
+const axios = require('axios')
 
 const params = { region: "us-east-1" };
 const secrets = new SecretsManager(params);
