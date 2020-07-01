@@ -16,7 +16,9 @@ provider:
   memorySize: 512
   tags:
     GLOBAL-TAG2: bar
-  environment: 
+  environment:
+    DEBUG: ${env:DEBUG}
+    SLS_DEBUG: ${env:SLS_DEBUG}
     BUCKET: ${self:custom.BUCKET}
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SNAPSHOT_BUCKET: !Ref OctoprintSnapshotBucket
@@ -27,16 +29,16 @@ custom:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
     master: https://www.example.com/api/master
-  
+
 # you can add statements to the Lambda function's IAM Role here
 iamRoleStatements:
-  - Effect: "Allow"
+  - Effect: 'Allow'
     Action:
-      - "s3:ListBucket"
-    Resource: { "Fn::Join": ["", ["arn:aws:s3:::", { "Ref": "OctoprintSnapshotBucket" }]] }
-  - Effect: "Allow"
+      - 's3:ListBucket'
+    Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': 'OctoprintSnapshotBucket' }]] }
+  - Effect: 'Allow'
     Action:
-      - "s3:PutObject"
+      - 's3:PutObject'
     Resource:
       Fn::GetAtt: [OctoprintSnapshotBucket, Arn]
 
@@ -79,12 +81,12 @@ resources:
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:
-                - "*"
+                - '*'
               AllowedHeaders:
-                - "*"
+                - '*'
               AllowedMethods:
                 - GET
   Outputs:
     NewOutput:
-      Description: "Description for the output"
-      Value: "Some output value"
+      Description: 'Description for the output'
+      Value: 'Some output value'

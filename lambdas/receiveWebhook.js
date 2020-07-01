@@ -1,20 +1,20 @@
-const Debug = require("debug");
-const { S3, SecretsManager } = require("aws-sdk");
-const Responses = require("./utils/apiResponses");
-const axios = require("axios");
+const Debug = require('debug');
+const { S3, SecretsManager } = require('aws-sdk');
+const Responses = require('./utils/apiResponses');
+const axios = require('axios');
 
-const params = { region: "us-east-1" };
+const params = { region: 'us-east-1' };
 const secrets = new SecretsManager(params);
 const s3 = new S3(params);
-const debug = Debug("handlers:receiveWebhook");
+const debug = Debug('handlers:receiveWebhook');
 
 const MESSAGE_PAYLOAD = {
-  channel: "#3dprinting",
-  username: "AWS Lambda 3D Printerbot",
-  text: "",
-  icon_emoji: ":aws:"
+  channel: '#3dprinting',
+  username: 'AWS Lambda 3D Printerbot',
+  text: '',
+  icon_emoji: ':aws:'
 };
-const WEBHOOK_URL = "https://hooks.slack.com/services/";
+const WEBHOOK_URL = 'https://hooks.slack.com/services/';
 const Bucket = process.env.SNAPSHOT_BUCKET;
 
 const uploadImageAndAddUrl = async event => {
@@ -27,13 +27,13 @@ const uploadImageAndAddUrl = async event => {
     const response = await s3.putObject({
       Bucket,
       Key,
-      Body: Buffer.from(snapshotBuffer, "base64").toString(),
-      ContentType: "image/jpeg",
-      ACL: "public-read"
+      Body: Buffer.from(snapshotBuffer, 'base64').toString(),
+      ContentType: 'image/jpeg',
+      ACL: 'public-read'
     });
 
     if (response.ResponseMetadata && response.ResponseMetadata.HTTPStatusCode === 200) {
-      const url = "https://{BUCKET}.s3.amazonaws.com/{KEY}";
+      const url = 'https://{BUCKET}.s3.amazonaws.com/{KEY}';
       debug(`Successfully uploaded image to s3: ${url}`);
       return { url: url, thumb_url: url };
     }
@@ -41,7 +41,7 @@ const uploadImageAndAddUrl = async event => {
 };
 
 module.exports.handler = async event => {
-  debug("Incoming event, %o", event);
+  debug('Incoming event, %o', event);
   const {
     job__user: USER,
     topic: TOPIC,
@@ -74,24 +74,24 @@ module.exports.handler = async event => {
 
   const image_urls = await uploadImageAndAddUrl(event);
   const SLACK_URL =
-    WEBHOOK_URL + (await secrets.getSecretValue({ SecretId: "AWCREDS" })["AW-SLACK"]);
+    WEBHOOK_URL + (await secrets.getSecretValue({ SecretId: 'AWCREDS' })['AW-SLACK']);
 
   const payload = { ...MESSAGE_PAYLOAD };
-  payload.headers = { "Content-Type": "application/json" };
+  payload.headers = { 'Content-Type': 'application/json' };
   payload.text = message;
 
   if (image_urls) {
     debug(image_urls);
     payload.attachments = [
       {
-        fallback: "OctoPrint Screenshot.",
-        text: "Screenshot",
+        fallback: 'OctoPrint Screenshot.',
+        text: 'Screenshot',
         image_url: image_urls.url,
         thumb_url: image_urls.thumb_url
       }
     ];
   }
   const response = await axios.post(SLACK_URL, payload);
-
+  debug(`%o`, response);
   return Responses._200({ message });
 };
