@@ -1,4 +1,4 @@
-const { handler } = require('../lambdas/receiveWebhook');
+const { handler } = require('../src/lambdas/receiveWebhook');
 
 describe('Test receiveWebhook()', () => {
   test('correct greeting is generated', async () => {

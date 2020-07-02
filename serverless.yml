@@ -3,7 +3,7 @@ org: andresmweber
 app: my-first-app
 plugins:
   - serverless-dotenv-plugin
-  - serverless-offline
+  - serverless-offlineF
   - serverless-plugin-existing-s3
   - serverless-bundle
   - serverless-plugin-git-variables
@@ -17,9 +17,11 @@ provider:
   tags:
     GLOBAL-TAG2: bar
   environment:
-    DEBUG: ${env:DEBUG}
-    SLS_DEBUG: ${env:SLS_DEBUG}
+    DEBUG: ${env:DEBUG, ''}
+    SLS_DEBUG: ${env:SLS_DEBUG, ''}
     BUCKET: ${self:custom.BUCKET}
+    REGION: ${self:provider.region}
+    STAGE: ${self:provider.stage}
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SNAPSHOT_BUCKET: !Ref OctoprintSnapshotBucket
 
@@ -49,7 +51,6 @@ package:
     - lambdas/**
   exclude:
     - ./node_modules/
-    - exclude-me-dir/**
     - tests/**
   individually: true
 
