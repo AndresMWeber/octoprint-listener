@@ -5,7 +5,7 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-plugin-git-variables
   - serverless-offline
-  - serverless-bundle
+  # - serverless-bundle
   - serverless-export-env
 package:
   include:
@@ -24,7 +24,7 @@ provider:
   tags:
     GIT-USER: ${self:custom.serverlessGitUser}
   environment:
-    DEBUG: ${env:DEBUG, ''}
+    DEBUG: ${env:DEBUG, 'octolistener:*'}
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
@@ -92,7 +92,8 @@ functions:
           path: webook
           method: POST
           cors: true
-          integration: 'lambda'
+          private: false
+          integration: 'lambda-proxy'
     environment:
       BUCKET: !Ref OctoprintSnapshotBucket
   getUser:

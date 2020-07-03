@@ -1,4 +1,4 @@
-const Responses = require('../utils/apiResponses')
+const { Responses } = require('../utils/apiResponses')
 const Debug = require('debug')
 
 const debug = new Debug('octolistener:handlers:getUser')

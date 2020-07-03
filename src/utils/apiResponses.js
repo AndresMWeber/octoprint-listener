@@ -7,25 +7,28 @@ const CommonHeaders = {
 const Responses = {
   _200(data = {}) {
     return {
+      isBase64Encoded: false,
       headers: { ...CommonHeaders },
       statusCode: 200,
-      body: data
+      body: JSON.stringify(data)
     }
   },
   _404(data = {}) {
     return {
+      isBase64Encoded: false,
       headers: { ...CommonHeaders },
       statusCode: 404,
-      body: data
+      body: JSON.stringify(data)
     }
   },
   _400(data = {}) {
     return {
+      isBase64Encoded: false,
       headers: { ...CommonHeaders },
       statusCode: 400,
-      body: data
+      body: JSON.stringify(data)
     }
   }
 }
 
-module.exports = Responses
+module.exports = { Responses }
