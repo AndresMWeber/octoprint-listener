@@ -31,7 +31,7 @@ provider:
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SLACK_URL: ${ssm:/aw/slack/octoprint~true}
     BUCKET: ${self:custom.imageBucket}
-    BRANCH: ${self:custom.gitBranch, self:custom.serverlessBranch}
+    BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
     GIT_COMMIT_LONG: ${self:custom.gitCommitLong}
     GIT_TAGS: ${self:custom.gitTags}
     GIT_IS_DIRTY: ${self:custom.gitDirty}
@@ -47,6 +47,9 @@ provider:
     SLS_CI_REPO_OWNER: ${self:custom.serverlessRepoOwner}
     SLS_CI_COMMIT_MSG: ${self:custom.serverlessCommitMessage}
     SLS_CI_BUILD_ID: ${self:custom.serverlessBuildId}
+    COVERALLS_SERVICE_NAME: serverless
+    COVERALLS_REPO_TOKEN: ${ssm:/aw/octo-listener/coveralls~true}
+    COVERALLS_GIT_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
 custom:
   imageBucket: octoprint-listener-snapshot-${self:provider.stage}-bucket
   gitCommitLong: ${env:GIT_COMMIT_LONG, git:sha1}
