@@ -92,7 +92,7 @@ functions:
           path: webook
           method: POST
           cors: true
-          integration: LAMBDA
+          integration: 'lambda'
     environment:
       BUCKET: !Ref OctoprintSnapshotBucket
   getUser:
