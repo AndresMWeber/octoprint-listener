@@ -6,4 +6,7 @@ jspm_packages
 .serverless
 .env.json
 .webpack
+
+# General
 .env
+coverage

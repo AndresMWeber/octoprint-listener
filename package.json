@@ -7,7 +7,8 @@
   "scripts": {
     "preinstall": "printenv | sort",
     "pretest": "sls print",
-    "test": "./node_modules/.bin/jest --env=node --coverage && coveralls < coverage/lcov.info",
+    "test": "./node_modules/.bin/jest --env=node --coverage",
+    "posttest": "if [ -z ${COVERALLS_REPO_TOKEN+x} ]; then echo \"skipping coverage upload\"; else ./node_modules/.bin/coveralls < coverage/lcov.info; fi",
     "sls-test": "serverless-bundle test",
     "lint": "eslint  --ignore-path .gitignore .",
     "lint:updated": "pipe-git-updated --ext=js -- eslint --ignore-path .gitignore",

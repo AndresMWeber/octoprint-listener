@@ -22,16 +22,16 @@ provider:
   region: ${opt:region, 'us-east-1'}
   memorySize: 512
   tags:
-    GLOBAL-TAG2: bar
+    GIT-USER: ${self:custom.serverlessGitUser}
   environment:
     DEBUG: ${env:DEBUG, ''}
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
-    BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
-    SLACK_URL: ${ssm:/aw/slack/octoprint~true}
-    BUCKET: ${self:custom.imageBucket}
-    BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
+    AW_BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
+    AW_SLACK_URL: ${ssm:/aw/slack/octoprint~true}
+    AW_BUCKET: ${self:custom.imageBucket}
+    AW_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
     GIT_COMMIT_LONG: ${self:custom.gitCommitLong}
     GIT_TAGS: ${self:custom.gitTags}
     GIT_IS_DIRTY: ${self:custom.gitDirty}
@@ -39,14 +39,14 @@ provider:
     GIT_REPOSITORY: ${self:custom.gitRepo}
     GIT_DESCRIPTION: ${self:custom.gitDescription}
     GIT_DESCRIPTION_LONG: ${self:custom.gitDescriptionLong}
-    SLS_CI_GIT_BRANCH: ${self:custom.serverlessBranch}
-    SLS_CI_GIT_USER: ${self:custom.serverlessGitUser}
-    SLS_CI_GIT_ORG: ${self:custom.serverlessGitOrg}
-    SLS_CI_STAGE: ${self:custom.serverlessStage}
-    SLS_CI_REPO: ${self:custom.serverlessRepo}
-    SLS_CI_REPO_OWNER: ${self:custom.serverlessRepoOwner}
-    SLS_CI_COMMIT_MSG: ${self:custom.serverlessCommitMessage}
-    SLS_CI_BUILD_ID: ${self:custom.serverlessBuildId}
+    SLS_CI_GIT_BRANCH: ${self:custom.serverlessBranch, false}
+    SLS_CI_GIT_USER: ${self:custom.serverlessGitUser, false}
+    SLS_CI_GIT_ORG: ${self:custom.serverlessGitOrg, false}
+    SLS_CI_STAGE: ${self:custom.serverlessStage, false}
+    SLS_CI_REPO: ${self:custom.serverlessRepo, false}
+    SLS_CI_REPO_OWNER: ${self:custom.serverlessRepoOwner, false}
+    SLS_CI_COMMIT_MSG: ${self:custom.serverlessCommitMessage, false}
+    SLS_CI_BUILD_ID: ${self:custom.serverlessBuildId, false}
     COVERALLS_SERVICE_NAME: serverless
     COVERALLS_REPO_TOKEN: ${ssm:/aw/octo-listener/coveralls~true}
     COVERALLS_GIT_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
@@ -59,14 +59,14 @@ custom:
   gitRepo: ${env:GIT_REPOSITORY, git:repository}
   gitDescription: ${env:GIT_DESCRIPTION, git:describe}
   gitDescriptionLong: ${git:repository} - ${git:branch} - ${git:tags}
-  serverlessBranch: ${env:SERVERLESS_BRANCH, ''}
-  serverlessGitUser: ${env:SERVERLESS_COMMIT_USER, ''}
-  serverlessGitOrg: ${env:SERVERLESS_ORG, ''}
-  serverlessStage: ${env:SERVERLESS_PLATFORM_STAGE, ''}
-  serverlessRepo: ${env:SERVERLESS_REPO, ''}
-  serverlessRepoOwner: ${env:SERVERLESS_REPO_OWNER, ''}
-  serverlessCommitMessage: ${env:SERVERLESS_COMMIT_MSG, ''}
-  serverlessBuildId: ${env:SERVERLESS_BUILD_ID, ''}
+  serverlessBranch: ${env:SERVERLESS_BRANCH}
+  serverlessGitUser: ${env:SERVERLESS_COMMIT_USER}
+  serverlessGitOrg: ${env:SERVERLESS_ORG}
+  serverlessStage: ${env:SERVERLESS_PLATFORM_STAGE}
+  serverlessRepo: ${env:SERVERLESS_REPO}
+  serverlessRepoOwner: ${env:SERVERLESS_REPO_OWNER}
+  serverlessCommitMessage: ${env:SERVERLESS_COMMIT_MSG}
+  serverlessBuildId: ${env:SERVERLESS_BUILD_ID}
   apiEndpoints:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
@@ -92,6 +92,7 @@ functions:
           path: webook
           method: POST
           cors: true
+          integration: LAMBDA
     environment:
       BUCKET: !Ref OctoprintSnapshotBucket
   getUser:
