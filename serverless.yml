@@ -2,11 +2,11 @@ service: octoprint-listener
 org: andresmweber
 app: my-first-app
 plugins:
-  - serverless-export-env
   - serverless-dotenv-plugin
   - serverless-plugin-git-variables
   - serverless-offline
   - serverless-bundle
+  - serverless-export-env
 provider:
   name: aws
   runtime: nodejs12.x
@@ -19,12 +19,17 @@ provider:
   environment:
     DEBUG: ${env:DEBUG, ''}
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
-    BUCKET: ${self:custom.BUCKET}
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
-    SNAPSHOT_BUCKET: !Ref OctoprintSnapshotBucket
     SLACK_URL: ${ssm:/aw/slack/octoprint~true}
+    BUCKET: ${self:custom.BUCKET}
+    GIT_COMMIT_LONG: ${git:sha1}
+    GIT_TAGS: ${git:tags}
+    GIT_IS_DIRTY: ${git:isDirty}
+    GIT_BRANCH: ${git:branch}
+    GIT_REPOSITORY: ${git:repository}
+    GIT_DESCRIPTION: ${git:describe}
 
 package:
   include:
@@ -35,12 +40,12 @@ package:
   individually: true
 
 custom:
+  gitDescription: ${git:repository} - ${git:branch} - ${git:tags}
   BUCKET: octoprint-listener-snapshot-${self:provider.stage}-bucket
   apiEndpoints:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
     master: https://www.example.com/api/master
-
 
 iamRoleStatements:
   - Effect: 'Allow'
@@ -56,15 +61,17 @@ iamRoleStatements:
 functions:
   receiveWebhook:
     handler: src/lambdas/receiveWebhook.handler
+    description: ${self:custom.gitDescription}
     events:
       - http:
           path: webook
           method: POST
           cors: true
     environment:
-      SOMETHING_ELSE: !Ref OctoprintSnapshotBucket
+      BUCKET: !Ref OctoprintSnapshotBucket
   getUser:
     handler: src/lambdas/getUser.handler
+    description: ${self:custom.gitDescription}
     events:
       - http:
           path: get-user/{ID}
@@ -73,6 +80,10 @@ functions:
 
 # you can add CloudFormation resource templates here
 resources:
+  Description: >
+    ${self:service} ${git:branch}:${git:sha1}
+    https://github.com/andresmweber/octoprint-listener
+    ${git:message}
   Resources:
     OctoprintSnapshotBucket:
       Type: AWS::S3::Bucket
