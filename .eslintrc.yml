@@ -1,0 +1,53 @@
+  
+root: true
+extends:
+    - eslint:recommended
+    - plugin:node/recommended
+    - '@serverless/eslint-config/node'
+    - prettier
+
+env:
+    es6: true
+    node: true
+    jest: true
+    jest/globals: true
+
+plugins:
+    - unused-imports
+    - import
+    - jest
+
+rules:
+    strict: 0
+    camelcase: 0
+    radix: 0
+    consistent-return: 0
+    no-console: warn
+    new-cap: warn
+    no-undef: error
+    no-shadow: warn
+    no-unused-vars: warn
+    unused-imports/no-unused-imports: error
+    import/no-extraneous-dependencies: 0
+    import/named: error
+    import/namespace: error
+    import/default: error
+    import/export: error
+    node/exports-style: [error, module.exports]
+    node/file-extension-in-import: error
+    node/prefer-global/buffer: error
+    node/prefer-global/console: error
+    node/prefer-global/process: error
+    node/prefer-global/url-search-params: error
+    node/prefer-global/url: error
+    node/prefer-promises/dns: error
+    node/prefer-promises/fs: error
+    node/no-unpublished-require: 0
+    jest/no-disabled-tests: warn
+    jest/no-focused-tests: error
+    jest/no-identical-title: error
+    jest/prefer-to-have-length: warn
+    jest/valid-expect: error
+
+parserOptions:
+    sourceType: module

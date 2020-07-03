@@ -1,34 +1,53 @@
 {
-  "name": "aw-octoprint-listener",
+  "name": "octoprint-listener",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "author": "Andres Weber",
+  "license": "ISC",
+  "description": "An AWS deployed webhook url listener for octoprint webhook events.",
+  "scripts": {
+    "test": "./node_modules/.bin/jest --env=node",
+    "sls-test": "serverless-bundle test",
+    "lint": "eslint  --ignore-path .gitignore .",
+    "lint:updated": "pipe-git-updated --ext=js -- eslint --ignore-path .gitignore",
+    "prettier-check": "prettier -c --ignore-path .gitignore \"**/*.{css,html,js,json,md,yaml,yml}\"",
+    "prettier-check:updated": "pipe-git-updated --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier -c",
+    "prettify": "prettier --write --ignore-path .gitignore \"**/*.{css,html,js,json,md,yaml,yml}\"",
+    "prettify:updated": "pipe-git-updated --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier --write",
+    "create:dotenv": "serverless export-env"
+  },
   "dependencies": {
     "axios": "^0.19.2",
     "debug": "^4.1.1"
   },
   "devDependencies": {
+    "@serverless/eslint-config": "^2.1.1",
     "aws-sdk": "^2.708.0",
+    "dotenv": "^8.2.0",
+    "eslint": "^7.3.1",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-import": "^2.22.0",
+    "eslint-plugin-jest": "^23.17.1",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-unused-imports": "^0.1.3",
+    "git-list-updated": "^1.2.1",
     "jest": "^26.1.0",
+    "prettier": "^2.0.5",
     "serverless-bundle": "^1.8.0",
     "serverless-dotenv-plugin": "^2.4.2",
+    "serverless-export-env": "^1.3.1",
     "serverless-offline": "^6.4.0",
     "serverless-plugin-existing-s3": "^2.4.0",
-    "serverless-plugin-git-variables": "^4.0.0",
-    "serverless-s3-sync": "^1.14.3"
-  },
-  "scripts": {
-    "test": "./node_modules/.bin/jest --env=node",
-    "sls-test": "serverless-bundle test"
+    "serverless-plugin-git-variables": "^4.0.0"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/AndresMWeber/octoprint-listener.git"
   },
-  "author": "",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/AndresMWeber/octoprint-listener/issues"
+  },
+  "engines": {
+    "node": ">=12"
   },
   "homepage": "https://github.com/AndresMWeber/octoprint-listener#readme"
 }

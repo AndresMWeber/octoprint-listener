@@ -1,0 +1,88 @@
+{
+  "deviceIdentifier": "@deviceIdentifier",
+  "apiSecret": "@apiSecret",
+  "topic": "@topic",
+  "message": "@message",
+  "extra": {
+    "origin": "local",
+    "name": "myFile.gcode",
+    "user": "myUserName",
+    "owner": "owner of the file",
+    "path": "/someFolder/myFile.gcode",
+    "size": 10890569
+  },
+
+  "custom1": "my custom data",
+  "custom2": "my second piece of custom data",
+  "print_name": "@job.file.name",
+  "estimated_print_time": "@job.estimatedPrintTime",
+  "progress": {
+    "completion": 14.496484023169915,
+    "filepos": 35087,
+    "printTime": 29,
+    "printTimeLeft": 40,
+    "printTimeLeftOrigin": "average"
+  },
+  "meta": {
+    "statistics": {
+      "averagePrintTime": {
+        "_default": 49.04197595574509
+      },
+      "lastPrintTime": {
+        "_default": 50.53992706
+      }
+    },
+    "hash": "2d2f2c6a410f8786b62604422799c9f3c0721367",
+    "analysis": {
+      "estimatedPrintTime": 476.05552375713864,
+      "printingArea": {
+        "maxZ": 5.6,
+        "maxX": 136.67,
+        "maxY": 116.672,
+        "minX": 0.0,
+        "minY": -3.0,
+        "minZ": 0.0
+      },
+      "dimensions": {
+        "width": 136.67,
+        "depth": 119.672,
+        "height": 5.6
+      },
+      "filament": {
+        "tool0": {
+          "volume": 0.8077585001602579,
+          "length": 335.8269600000015
+        }
+      }
+    },
+    "history": [
+      {
+        "timestamp": 1588195498.7716029,
+        "printTime": 50.352958230999995,
+        "printerProfile": "_default",
+        "success": true
+      }
+    ]
+  },
+  "job": {
+    "file": {
+      "name": "DarwinKeycap.gcode",
+      "path": "DarwinKeycap.gcode",
+      "display": "DarwinKeycap.gcode",
+      "origin": "local",
+      "size": 242038,
+      "date": 1588195405
+    },
+    "estimatedPrintTime": 476.05552375713864,
+    "averagePrintTime": 48.8202253183409,
+    "lastPrintTime": 31.290278981000007,
+    "filament": {
+      "tool0": {
+        "volume": 0.8077585001602579,
+        "length": 335.8269600000015
+      }
+    },
+    "user": "iAmLegend"
+  },
+  "snapshot": "@snapshot"
+}

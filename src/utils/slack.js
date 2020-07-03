@@ -1,11 +1,10 @@
 const Debug = require('debug')
 const axios = require('axios')
-const { SecretsManager } = require('aws-sdk')
+const {
+  SLACK_WEBHOOK_URLS: { octoprint: SLACK_URL }
+} = require('./env')
 
-const secrets = new SecretsManager({ region: 'us-east-1' })
-const debug = Debug('utils:slack')
-const WEBHOOK_BASE = 'https://hooks.slack.com/services/'
-let SLACK_URL
+const debug = new Debug('octolistener:utils:slack')
 const MESSAGE_PAYLOAD = {
   channel: '#3dprinting',
   username: 'AWS Lambda 3D Printerbot',
@@ -13,12 +12,22 @@ const MESSAGE_PAYLOAD = {
   icon_emoji: ':aws:'
 }
 
-const sendSlackMessage = async payload => {
-  if (!SLACK_URL) {
-    SLACK_URL = WEBHOOK_BASE + (await secrets.getSecretValue({ SecretId: 'AWCREDS' })['AW-SLACK'])
+const sendSlackMessage = async (payload, options) => {
+  if (SLACK_URL) {
+    debug(`Sending to slack webhook url: ${SLACK_URL}`)
+    try {
+      const response = await axios.post(SLACK_URL, payload, options)
+      return { response, message: payload.text }
+    } catch (err) {
+      debug(`Failed sending payload %o to slack webhook URL: ${err}`, payload)
+      throw new Error(
+        `Failed sending payload to slack webhook URL ${
+          err.response.data
+        } from payload ${JSON.stringify(payload)}`
+      )
+    }
   }
-  debug(`Sending to slack webhook url: ${SLACK_URL}`)
-  return { response: await axios.post(SLACK_URL, payload), message: payload.text }
+  throw new Error('Could not determine slack webhook URL endpoint to send to')
 }
 
 const formatOctoWebhookMessage = ({
@@ -67,12 +76,9 @@ const formatOctoWebhookMessage = ({
 }
 
 const createSlackPayload = (event, image_url) => {
-  const payload = {
-    headers: { 'Content-Type': 'application/json' },
-    text: formatOctoWebhookMessage(event),
-    ...MESSAGE_PAYLOAD
-  }
-
+  const payload = { ...MESSAGE_PAYLOAD }
+  payload.text = formatOctoWebhookMessage(event)
+  
   if (image_url) {
     payload.attachments = [
       {

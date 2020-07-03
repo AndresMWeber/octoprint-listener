@@ -2,11 +2,11 @@ service: octoprint-listener
 org: andresmweber
 app: my-first-app
 plugins:
+  - serverless-export-env
   - serverless-dotenv-plugin
-  - serverless-offlineF
-  - serverless-plugin-existing-s3
-  - serverless-bundle
   - serverless-plugin-git-variables
+  - serverless-offline
+  - serverless-bundle
 provider:
   name: aws
   runtime: nodejs12.x
@@ -21,9 +21,18 @@ provider:
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
     BUCKET: ${self:custom.BUCKET}
     REGION: ${self:provider.region}
-    STAGE: ${self:provider.stage}
+    STAGE: ${env:STAGE, self:provider.stage}
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SNAPSHOT_BUCKET: !Ref OctoprintSnapshotBucket
+    SLACK_URL: ${ssm:/aw/slack/octoprint~true}
+
+package:
+  include:
+    - lambdas/**
+  exclude:
+    - ./node_modules/
+    - tests/**
+  individually: true
 
 custom:
   BUCKET: octoprint-listener-snapshot-${self:provider.stage}-bucket
@@ -32,7 +41,7 @@ custom:
     dev: https://www.example.com/api/dev
     master: https://www.example.com/api/master
 
-# you can add statements to the Lambda function's IAM Role here
+
 iamRoleStatements:
   - Effect: 'Allow'
     Action:
@@ -44,19 +53,9 @@ iamRoleStatements:
     Resource:
       Fn::GetAtt: [OctoprintSnapshotBucket, Arn]
 
-# you can add packaging information here
-package:
-  include:
-    - upload/**
-    - lambdas/**
-  exclude:
-    - ./node_modules/
-    - tests/**
-  individually: true
-
 functions:
   receiveWebhook:
-    handler: lambdas/receiveWebhook.handler
+    handler: src/lambdas/receiveWebhook.handler
     events:
       - http:
           path: webook
@@ -65,7 +64,7 @@ functions:
     environment:
       SOMETHING_ELSE: !Ref OctoprintSnapshotBucket
   getUser:
-    handler: lambdas/getUser.handler
+    handler: src/lambdas/getUser.handler
     events:
       - http:
           path: get-user/{ID}

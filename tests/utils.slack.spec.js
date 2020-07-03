@@ -1,8 +1,21 @@
-const {
-  sendSlackMessage,
-  createSlackPayload,
-  formatOctoWebhookMessage
-} = require('../src/utils/slack')
+const { createSlackPayload, formatOctoWebhookMessage } = require('../src/utils/slack')
+const webhookPayload = require('./fixtures/webhook_flat.json')
+const Debug = require('debug')
+
+const debug = new Debug('tests:slack')
+const REQUIRED_ENTRIES = [
+  'job__user',
+  'topic',
+  'deviceIdentifier',
+  'job__file__name',
+  'message',
+  'progress__completion',
+  'job__estimatedPrintTime',
+  'job__averagePrintTime',
+  'job__lastPrintTime',
+  'progress__printTime',
+  'progress__printTimeLeft'
+]
 
 describe('formatOctoWebhookMessage()', () => {
   describe('should run correctly', () => {
@@ -26,8 +39,21 @@ describe('formatOctoWebhookMessage()', () => {
 
     it('correct message is sent from a full payload', () => {
       const message = formatOctoWebhookMessage(this.EVENT_PROP)
-      Object.keys(this.EVENT_PROP.body).forEach(key => {
-        expect(message.includes(this.EVENT_PROP.body[key]))
+      debug(message)
+      debug(this.EVENT_PROP.body)
+      REQUIRED_ENTRIES.forEach(key => {
+        debug(key, this.EVENT_PROP.body[key])
+        expect(message.includes(this.EVENT_PROP.body[key])).toBeTruthy()
+      })
+    })
+
+    it('correct message is sent with an extended payload', () => {
+      const message = formatOctoWebhookMessage({ body: webhookPayload })
+      debug(message)
+      debug(webhookPayload)
+      REQUIRED_ENTRIES.forEach(key => {
+        debug(key, webhookPayload[key])
+        expect(message.includes(webhookPayload[key])).toBeTruthy()
       })
     })
 
@@ -38,9 +64,23 @@ describe('formatOctoWebhookMessage()', () => {
       delete this.EVENT_PROP.body.deviceIdentifier
       expect(createSlackPayload(this.EVENT_PROP)).toStrictEqual({
         channel: '#3dprinting',
-        headers: { 'Content-Type': 'application/json' },
         icon_emoji: ':aws:',
-        text: '',
+        text:
+          '\n' +
+          '  🖨️John@ ** 👾::📜Cows 🗃️ _test.file_ 🗃️\n' +
+          '\n' +
+          '  > \n' +
+          '\n' +
+          '  ```\n' +
+          '  Percent Complete: ⏳ %\n' +
+          '  Estimated Print Time: ⏲ 120s\n' +
+          '  Average Print Time:  ⌛ s\n' +
+          '  Last Print Time: ⏱ 80s\n' +
+          '  Progress Print Time: 60s\n' +
+          '  Progress Print Time Left: 60s\n' +
+          '  ```\n' +
+          '  Check it live:  http://ender3octopi.local/ || http://ender3octopi.local:80/webcam/\n' +
+          '  ',
         username: 'AWS Lambda 3D Printerbot'
       })
     })
@@ -95,7 +135,6 @@ describe('createSlackPayload()', () => {
       expect(message).toHaveProperty('channel')
       expect(message).toHaveProperty('channel')
       expect(message).toHaveProperty('icon_emoji')
-      expect(message.headers).toStrictEqual({ 'Content-Type': 'application/json' })
       expect(message).not.toHaveProperty('attachments')
     })
 
@@ -106,9 +145,22 @@ describe('createSlackPayload()', () => {
       delete this.EVENT_PROP.body.deviceIdentifier
       expect(createSlackPayload(this.EVENT_PROP)).toStrictEqual({
         channel: '#3dprinting',
-        headers: { 'Content-Type': 'application/json' },
         icon_emoji: ':aws:',
-        text: '',
+        text: `
+  🖨️John@ ** 👾::📜Cows 🗃️ _test.file_ 🗃️
+
+  > 
+
+  \`\`\`
+  Percent Complete: ⏳ %
+  Estimated Print Time: ⏲ 120s
+  Average Print Time:  ⌛ s
+  Last Print Time: ⏱ 80s
+  Progress Print Time: 60s
+  Progress Print Time Left: 60s
+  \`\`\`
+  Check it live:  http://ender3octopi.local/ || http://ender3octopi.local:80/webcam/
+  `,
         username: 'AWS Lambda 3D Printerbot'
       })
     })
