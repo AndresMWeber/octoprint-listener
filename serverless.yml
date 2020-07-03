@@ -7,6 +7,13 @@ plugins:
   - serverless-offline
   - serverless-bundle
   - serverless-export-env
+package:
+  include:
+    - lambdas/**
+  exclude:
+    - ./node_modules/
+    - tests/**
+  individually: true
 provider:
   name: aws
   runtime: nodejs12.x
@@ -23,35 +30,40 @@ provider:
     STAGE: ${env:STAGE, self:provider.stage}
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SLACK_URL: ${ssm:/aw/slack/octoprint~true}
-    BUCKET: ${self:custom.BUCKET}
-
+    BUCKET: ${self:custom.imageBucket}
+    BRANCH: ${self:custom.gitBranch, self:custom.serverlessBranch}
     GIT_COMMIT_LONG: ${self:custom.gitCommitLong}
     GIT_TAGS: ${self:custom.gitTags}
     GIT_IS_DIRTY: ${self:custom.gitDirty}
-    GIT_BRANCH_2: ${self:custom.gitBranch_2}
+    GIT_BRANCH: ${self:custom.gitBranch}
     GIT_REPOSITORY: ${self:custom.gitRepo}
     GIT_DESCRIPTION: ${self:custom.gitDescription}
     GIT_DESCRIPTION_LONG: ${self:custom.gitDescriptionLong}
-
-package:
-  include:
-    - lambdas/**
-  exclude:
-    - ./node_modules/
-    - tests/**
-  individually: true
-
+    SLS_CI_GIT_BRANCH: ${self:custom.serverlessBranch}
+    SLS_CI_GIT_USER: ${self:custom.serverlessGitUser}
+    SLS_CI_GIT_ORG: ${self:custom.serverlessGitOrg}
+    SLS_CI_STAGE: ${self:custom.serverlessStage}
+    SLS_CI_REPO: ${self:custom.serverlessRepo}
+    SLS_CI_REPO_OWNER: ${self:custom.serverlessRepoOwner}
+    SLS_CI_COMMIT_MSG: ${self:custom.serverlessCommitMessage}
+    SLS_CI_BUILD_ID: ${self:custom.serverlessBuildId}
 custom:
-  BUCKET: octoprint-listener-snapshot-${self:provider.stage}-bucket
-
+  imageBucket: octoprint-listener-snapshot-${self:provider.stage}-bucket
   gitCommitLong: ${env:GIT_COMMIT_LONG, git:sha1}
   gitTags: ${env:TAGS, git:tags}
   gitDirty: ${env:GIT_IS_DIRTY, git:isDirty}
-  gitBranch_2: ${env:GIT_BRANCH, git:branch}
+  gitBranch: ${git:branch}
   gitRepo: ${env:GIT_REPOSITORY, git:repository}
   gitDescription: ${env:GIT_DESCRIPTION, git:describe}
   gitDescriptionLong: ${git:repository} - ${git:branch} - ${git:tags}
-
+  serverlessBranch: ${env:SERVERLESS_BRANCH, ''}
+  serverlessGitUser: ${env:SERVERLESS_COMMIT_USER, ''}
+  serverlessGitOrg: ${env:SERVERLESS_ORG, ''}
+  serverlessStage: ${env:SERVERLESS_PLATFORM_STAGE, ''}
+  serverlessRepo: ${env:SERVERLESS_REPO, ''}
+  serverlessRepoOwner: ${env:SERVERLESS_REPO_OWNER, ''}
+  serverlessCommitMessage: ${env:SERVERLESS_COMMIT_MSG, ''}
+  serverlessBuildId: ${env:SERVERLESS_BUILD_ID, ''}
   apiEndpoints:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
@@ -98,7 +110,7 @@ resources:
     OctoprintSnapshotBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:custom.BUCKET}
+        BucketName: ${self:custom.imageBucket}
         CorsConfiguration:
           CorsRules:
             - AllowedOrigins:

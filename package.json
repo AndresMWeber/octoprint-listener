@@ -5,7 +5,8 @@
   "license": "ISC",
   "description": "An AWS deployed webhook url listener for octoprint webhook events.",
   "scripts": {
-    "postinstall": "printenv | sort",
+    "preinstall": "printenv | sort",
+    "pretest": "sls print",
     "test": "./node_modules/.bin/jest --env=node",
     "sls-test": "serverless-bundle test",
     "lint": "eslint  --ignore-path .gitignore .",
