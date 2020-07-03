@@ -24,12 +24,14 @@ provider:
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SLACK_URL: ${ssm:/aw/slack/octoprint~true}
     BUCKET: ${self:custom.BUCKET}
-    GIT_COMMIT_LONG: ${self:custom.GIT_COMMIT_LONG}
-    GIT_TAGS: ${self:custom.TAGS}
-    GIT_IS_DIRTY: ${self:custom.GIT_IS_DIRTY}
-    GIT_BRANCH: ${self:custom.GIT_BRANCH}
-    GIT_REPOSITORY: ${self:custom.GIT_REPOSITORY}
-    GIT_DESCRIPTION: ${self:custom.GIT_DESCRIPTION}
+
+    GIT_COMMIT_LONG: ${self:custom.gitCommitLong}
+    GIT_TAGS: ${self:custom.gitTags}
+    GIT_IS_DIRTY: ${self:custom.gitDirty}
+    GIT_BRANCH_2: ${self:custom.gitBranch_2}
+    GIT_REPOSITORY: ${self:custom.gitRepo}
+    GIT_DESCRIPTION: ${self:custom.gitDescription}
+    GIT_DESCRIPTION_LONG: ${self:custom.gitDescriptionLong}
 
 package:
   include:
@@ -40,14 +42,16 @@ package:
   individually: true
 
 custom:
-  gitDescription: ${git:repository} - ${git:branch} - ${git:tags}
   BUCKET: octoprint-listener-snapshot-${self:provider.stage}-bucket
-  GIT_COMMIT_LONG: ${env:GIT_COMMIT_LONG, git:sha1}
-  GIT_TAGS: ${env:TAGS, git:tags}
-  GIT_IS_DIRTY: ${env:GIT_IS_DIRTY, git:isDirty}
-  GIT_BRANCH: ${env:GIT_BRANCH, git:branch}
-  GIT_REPOSITORY: ${env:GIT_REPOSITORY, git:repository}
-  GIT_DESCRIPTION: ${env:GIT_DESCRIPTION, git:describe}
+
+  gitCommitLong: ${env:GIT_COMMIT_LONG, git:sha1}
+  gitTags: ${env:TAGS, git:tags}
+  gitDirty: ${env:GIT_IS_DIRTY, git:isDirty}
+  gitBranch_2: ${env:GIT_BRANCH, git:branch}
+  gitRepo: ${env:GIT_REPOSITORY, git:repository}
+  gitDescription: ${env:GIT_DESCRIPTION, git:describe}
+  gitDescriptionLong: ${git:repository} - ${git:branch} - ${git:tags}
+
   apiEndpoints:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
