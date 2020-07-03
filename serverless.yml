@@ -24,12 +24,12 @@ provider:
     BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
     SLACK_URL: ${ssm:/aw/slack/octoprint~true}
     BUCKET: ${self:custom.BUCKET}
-    GIT_COMMIT_LONG: ${git:sha1}
-    GIT_TAGS: ${git:tags}
-    GIT_IS_DIRTY: ${git:isDirty}
-    GIT_BRANCH: ${git:branch}
-    GIT_REPOSITORY: ${git:repository}
-    GIT_DESCRIPTION: ${git:describe}
+    GIT_COMMIT_LONG: ${self:custom.GIT_COMMIT_LONG}
+    GIT_TAGS: ${self:custom.TAGS}
+    GIT_IS_DIRTY: ${self:custom.GIT_IS_DIRTY}
+    GIT_BRANCH: ${self:custom.GIT_BRANCH}
+    GIT_REPOSITORY: ${self:custom.GIT_REPOSITORY}
+    GIT_DESCRIPTION: ${self:custom.GIT_DESCRIPTION}
 
 package:
   include:
@@ -42,6 +42,12 @@ package:
 custom:
   gitDescription: ${git:repository} - ${git:branch} - ${git:tags}
   BUCKET: octoprint-listener-snapshot-${self:provider.stage}-bucket
+  GIT_COMMIT_LONG: ${env:GIT_COMMIT_LONG, git:sha1}
+  GIT_TAGS: ${env:TAGS, git:tags}
+  GIT_IS_DIRTY: ${env:GIT_IS_DIRTY, git:isDirty}
+  GIT_BRANCH: ${env:GIT_BRANCH, git:branch}
+  GIT_REPOSITORY: ${env:GIT_REPOSITORY, git:repository}
+  GIT_DESCRIPTION: ${env:GIT_DESCRIPTION, git:describe}
   apiEndpoints:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
