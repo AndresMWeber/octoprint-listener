@@ -5,22 +5,22 @@ plugins:
   - serverless-dotenv-plugin
   - serverless-plugin-git-variables
   - serverless-offline
-  # - serverless-bundle
   - serverless-export-env
 package:
   include:
-    - lambdas/**
+    - src/**/*
   exclude:
     - ./node_modules/
     - tests/**
   individually: true
 provider:
+  profile: aw-serverless
   name: aws
   runtime: nodejs12.x
-  profile: aw-serverless
-  stage: ${opt:stage, self:custom.serverlessBranch, self:custom.gitBranch, env:STAGE, 'dev'}
+  stage: ${self:custom.serverlessBranch, self:custom.gitBranch, opt:stage, env:STAGE}
   region: ${opt:region, 'us-east-1'}
   memorySize: 512
+  role: bucketRole
   tags:
     GIT-USER: ${self:custom.serverlessGitUser}
   environment:
@@ -71,18 +71,7 @@ custom:
     prod: https://www.example.com/api/prod
     dev: https://www.example.com/api/dev
     master: https://www.example.com/api/master
-
-iamRoleStatements:
-  - Effect: 'Allow'
-    Action:
-      - 's3:ListBucket'
-    Resource: { 'Fn::Join': ['', ['arn:aws:s3:::', { 'Ref': 'OctoprintSnapshotBucket' }]] }
-  - Effect: 'Allow'
-    Action:
-      - 's3:PutObject'
-    Resource:
-      Fn::GetAtt: [OctoprintSnapshotBucket, Arn]
-
+    
 functions:
   receiveWebhook:
     handler: src/lambdas/receiveWebhook.handler
@@ -124,6 +113,45 @@ resources:
                 - '*'
               AllowedMethods:
                 - GET
+    bucketRole:
+      Type: AWS::IAM::Role
+      Properties:
+        Path: /octolistener/${self:provider.stage}/bucketRole/
+        RoleName: ${self:service}-${self:provider.stage}-bucketRole
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service:
+                  - lambda.amazonaws.com
+              Action: sts:AssumeRole
+        Policies:
+          - PolicyName: bucketPolicy
+            PolicyDocument:
+              Version: '2012-10-17'
+              Statement:
+                - Effect: Allow
+                  Action:
+                    - logs:CreateLogGroup
+                    - logs:CreateLogStream
+                    - logs:PutLogEvents
+                  Resource:
+                    - 'Fn::Join':
+                        - ':'
+                        - - 'arn:aws:logs'
+                          - Ref: 'AWS::Region'
+                          - Ref: 'AWS::AccountId'
+                          - 'log-group:/aws/lambda/*:*:*'
+                - Effect: 'Allow'
+                  Action:
+                    - 's3:PutObject'
+                    - 's3:PutObjectAcl'
+                    - 's3:GetObject'
+                    - 's3:ListBucket'
+                  Resource:
+                    - arn:aws:s3:::${self:custom.imageBucket}
+                    - arn:aws:s3:::${self:custom.imageBucket}/*
   Outputs:
     NewOutput:
       Description: 'Description for the output'

@@ -10,3 +10,4 @@ jspm_packages
 # General
 .env
 coverage
+serverless_sdk

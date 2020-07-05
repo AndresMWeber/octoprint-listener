@@ -1,11 +1,9 @@
 const { handler } = require('../src/lambdas/receiveWebhook')
-// const { json2multi } = require('./fixtures/json2multi')
 const fs = require('fs')
 
-const snapshotFixture = Buffer.from(
-  fs.readFileSync('./tests/fixtures/test.jpg'),
+const snapshotFixture = Buffer.from(fs.readFileSync('./tests/fixtures/upload.jpg')).toString(
   'binary'
-).toString('base64')
+)
 
 describe('Test receiveWebhook()', () => {
   beforeEach(() => {

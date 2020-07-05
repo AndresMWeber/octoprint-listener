@@ -39,8 +39,6 @@ describe('formatOctoWebhookMessage()', () => {
 
     it('correct message is sent from a full payload', () => {
       const message = formatOctoWebhookMessage(this.EVENT_PROP)
-      debug(message)
-      debug(this.EVENT_PROP.body)
       REQUIRED_ENTRIES.forEach(key => {
         debug(key, this.EVENT_PROP.body[key])
         expect(message.includes(this.EVENT_PROP.body[key])).toBeTruthy()
@@ -49,8 +47,6 @@ describe('formatOctoWebhookMessage()', () => {
 
     it('correct message is sent with an extended payload', () => {
       const message = formatOctoWebhookMessage({ body: webhookPayload })
-      debug(message)
-      debug(webhookPayload)
       REQUIRED_ENTRIES.forEach(key => {
         debug(key, webhookPayload[key])
         expect(message.includes(webhookPayload[key])).toBeTruthy()

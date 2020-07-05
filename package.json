@@ -7,7 +7,7 @@
   "scripts": {
     "preinstall": "printenv | sort",
     "postinstall": "sls print",
-    "test": "./node_modules/.bin/jest --env=node --coverage",
+    "test": "npm run create:dotenv && ./node_modules/.bin/jest --env=node --coverage",
     "posttest": "if [ -z ${COVERALLS_REPO_TOKEN+x} ]; then echo \"skipping coverage upload\"; else ./node_modules/.bin/coveralls < coverage/lcov.info; fi",
     "sls-test": "serverless-bundle test",
     "lint": "eslint  --ignore-path .gitignore .",
@@ -16,7 +16,7 @@
     "prettier-check:updated": "pipe-git-updated --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier -c",
     "prettify": "prettier --write --ignore-path .gitignore \"**/*.{css,html,js,json,md,yaml,yml}\"",
     "prettify:updated": "pipe-git-updated --ext=css --ext=html --ext=js --ext=json --ext=md --ext=yaml --ext=yml -- prettier --write",
-    "create:dotenv": "serverless export-env"
+    "create:dotenv": "sls export-env "
   },
   "dependencies": {
     "axios": "^0.19.2",

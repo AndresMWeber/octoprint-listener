@@ -2,7 +2,11 @@ const { json2multi, multi2json } = require('../src/utils/multipartForm')
 const webhook_partial = require('./fixtures/webhook_flat_partial.json')
 const webhook_full = require('./fixtures/webhook_flat.json')
 const webhooks_as_string = require('./fixtures/webhooks_as_string.json')
+const fs = require('fs')
 
+const snapshotFixture = Buffer.from(fs.readFileSync('./tests/fixtures/upload.jpg')).toString(
+  'binary'
+)
 const boundary = '----WebKitFormBoundary7MA4YWxkTrZu0gW'
 
 describe('json2multi()', () => {
@@ -24,11 +28,17 @@ describe('json2multi()', () => {
 describe('multi2json()', () => {
   describe('Should create a json object from properly formatted form url encoded string', () => {
     it('when given a partial object with values', () => {
-      expect(multi2json(webhooks_as_string.webhook_partial, boundary)).toEqual(webhook_partial)
+      const expected = { ...webhook_partial }
+      expected.snapshot.data = snapshotFixture
+      const webhookString = webhooks_as_string.webhook_partial.replace('(data)', snapshotFixture)
+      expect(multi2json(webhookString, boundary)).toEqual(expected)
     })
 
     it('when given a full object with values', () => {
-      expect(multi2json(webhooks_as_string.webhook_full, boundary)).toEqual(webhook_full)
+      const expected = { ...webhook_full }
+      expected.snapshot.data = snapshotFixture
+      const webhookString = webhooks_as_string.webhook_full.replace('(data)', snapshotFixture)
+      expect(multi2json(webhookString, boundary)).toEqual(expected)
     })
 
     it('when given an empty string', () => {
