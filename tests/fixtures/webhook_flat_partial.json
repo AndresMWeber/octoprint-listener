@@ -1,0 +1,18 @@
+{
+  "job__user": "John",
+  "topic": "Cows",
+  "deviceIdentifier": "A cool device",
+  "job__file__name": "test.file",
+  "message": "completed a bit",
+  "progress__completion": 50,
+  "job__estimatedPrintTime": 120,
+  "job__averagePrintTime": 100,
+  "job__lastPrintTime": 80,
+  "progress__printTime": 60,
+  "progress__printTimeLeft": 60,
+  "snapshot": {
+    "filename": "/D:/dev/octoprint-listener/tests/fixtures/test.jpg",
+    "type": "image/jpeg",
+    "data": "(data)"
+  }
+}

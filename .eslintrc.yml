@@ -21,11 +21,13 @@ rules:
     strict: 0
     camelcase: 0
     radix: 0
+    prefer-const: warn
     consistent-return: 0
     no-console: warn
     new-cap: warn
     no-undef: error
     no-shadow: warn
+    prefer-template: 0
     no-unused-vars: warn
     unused-imports/no-unused-imports: error
     import/no-extraneous-dependencies: 0

@@ -48,5 +48,9 @@
   "filament__tool0__volume": 0.8077585001602579,
   "filament__tool0__length": 335.8269600000015,
   "job__user": "iAmLegend",
-  "snapshot": "@snapshot"
+  "snapshot": {
+    "filename": "/D:/dev/octoprint-listener/tests/fixtures/test.jpg",
+    "type": "image/jpeg",
+    "data": "(data)"
+  }
 }

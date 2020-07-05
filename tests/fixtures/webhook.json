@@ -84,5 +84,9 @@
     },
     "user": "iAmLegend"
   },
-  "snapshot": "@snapshot"
+  "snapshot": {
+    "filename": "/D:/dev/octoprint-listener/tests/fixtures/test.jpg",
+    "type": "image/jpeg",
+    "data": "(data)"
+  }
 }

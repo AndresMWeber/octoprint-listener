@@ -6,7 +6,7 @@
   "description": "An AWS deployed webhook url listener for octoprint webhook events.",
   "scripts": {
     "preinstall": "printenv | sort",
-    "pretest": "sls print",
+    "postinstall": "sls print",
     "test": "./node_modules/.bin/jest --env=node --coverage",
     "posttest": "if [ -z ${COVERALLS_REPO_TOKEN+x} ]; then echo \"skipping coverage upload\"; else ./node_modules/.bin/coveralls < coverage/lcov.info; fi",
     "sls-test": "serverless-bundle test",
@@ -21,8 +21,7 @@
   "dependencies": {
     "axios": "^0.19.2",
     "debug": "^4.1.1",
-    "dotenv": "^8.2.0",
-    "parse-multipart": "^1.0.4"
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "@serverless/eslint-config": "^2.1.1",

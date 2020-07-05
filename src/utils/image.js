@@ -7,9 +7,9 @@ const debug = new Debug('octolistener:utils:image')
 
 const uploadImageAndAddUrl = async event => {
   if (event.body.snapshot) {
-    const Body = Buffer.from(event.body.snapshot, 'base64').toString()
-    const Key = `screenshot_${new Date()}.jpg`
-    debug(`Starting to upload snapshot -> ${Bucket}/${Key}.`)
+    const Body = Buffer.from(event.body.snapshot.data, 'base64').toString()
+    const Key = `screenshot_${new Date().toISOString()}.jpg`
+    debug(`Starting to upload snapshot -> ${Bucket}/${Key} with contents %o`, Body)
     const response = await s3.putObject({
       Bucket,
       Key,
@@ -23,7 +23,8 @@ const uploadImageAndAddUrl = async event => {
       debug(`Successfully uploaded image to s3: ${url}`)
       return { url, thumb_url: url }
     }
-    debug('Problem uploading to S3: %o', response)
+    debug('Problem uploading to S3')
+    debug(response.response)
     throw new Error(`Problem uploading to S3.`)
   }
   return
