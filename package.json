@@ -5,6 +5,9 @@
   "license": "ISC",
   "description": "An AWS deployed webhook url listener for octoprint webhook events.",
   "scripts": {
+    "start": "DEBUG=octolistener:* SLS_DEBUG=* sls offline",
+    "deploy": "SLS_DEBUG=* sls deploy",
+    "deployfn": "SLS_DEBUG=* sls deploy function --function $1",
     "preinstall": "printenv | sort",
     "postinstall": "sls print",
     "test": "npm run create:dotenv && ./node_modules/.bin/jest --env=node --coverage",
@@ -36,7 +39,7 @@
     "git-list-updated": "^1.2.1",
     "jest": "^26.1.0",
     "prettier": "^2.0.5",
-    "serverless-bundle": "^1.8.0",
+    "serverless-bundle": "^1.9.1",
     "serverless-dotenv-plugin": "^2.4.2",
     "serverless-export-env": "^1.3.1",
     "serverless-offline": "^6.4.0",
