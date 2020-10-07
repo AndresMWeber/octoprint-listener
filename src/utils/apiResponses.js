@@ -28,6 +28,14 @@ const Responses = {
       statusCode: 400,
       body: JSON.stringify(data)
     }
+  },
+  _500(err = {}) {
+    return {
+      isBase64Encoded: false,
+      headers: { ...CommonHeaders },
+      statusCode: 500,
+      body: JSON.stringify(err)
+    }
   }
 }
 

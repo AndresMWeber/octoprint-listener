@@ -1,6 +1,5 @@
 service: octoprint-listener
 org: andresmweber
-app: my-first-app
 plugins:
   - serverless-dotenv-plugin
   - serverless-plugin-git-variables
@@ -14,11 +13,13 @@ package:
     - tests/**
   individually: true
 provider:
-  profile: aw-serverless
+  profile: aw
   name: aws
   runtime: nodejs12.x
   stage: ${self:custom.serverlessBranch, self:custom.gitBranch, opt:stage, env:STAGE}
   region: ${opt:region, 'us-east-1'}
+  deploymentBucket:
+    name: ${self:service}-deploys
   memorySize: 512
   role: bucketRole
   tags:
@@ -78,21 +79,13 @@ functions:
     description: ${self:custom.gitDescription}
     events:
       - http:
-          path: webook
+          path: webhook
           method: POST
           cors: true
           private: false
           integration: 'lambda-proxy'
     environment:
       BUCKET: !Ref OctoprintSnapshotBucket
-  getUser:
-    handler: src/lambdas/getUser.handler
-    description: ${self:custom.gitDescription}
-    events:
-      - http:
-          path: get-user/{ID}
-          method: GET
-          cors: true
 
 # you can add CloudFormation resource templates here
 resources:

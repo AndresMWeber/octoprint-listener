@@ -11,7 +11,7 @@ const uploadImageAndAddUrl = async event => {
   if (event.body.snapshot) {
     debug(`Preprocessing image data: %o`, event.body.snapshot)
     const Body = binaryToBuffer(event.body.snapshot.data)
-    const Key = `snapshot_${new Date().toISOString()}.jpg`
+    const Key = encodeURIComponent(`snapshot_${new Date().toISOString()}.${event.body.snapshot.type.replace('image/', '')}`)
     debug(`Starting to upload snapshot -> ${Bucket}/${Key} with Content %o`, Body)
     try {
       const response = await s3
@@ -19,12 +19,13 @@ const uploadImageAndAddUrl = async event => {
           Bucket,
           Key,
           Body,
-          ContentType: 'image/jpeg',
+          ContentEncoding: 'base64',
+          ContentType: event.body.snapshot.type,
           ACL: 'public-read'
         })
         .promise()
       const url = `https://${Bucket}.s3.amazonaws.com/${Key}`
-      debug(`Successfully uploaded image to s3: ${url} with response ${response}`)
+      debug(`Successfully uploaded image to s3: ${url} with response %o`, response)
       return { url, thumb_url: url }
     } catch (err) {
       debug(`Problem uploading to S3 %o`, err)
