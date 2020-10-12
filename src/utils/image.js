@@ -11,7 +11,9 @@ const uploadImageAndAddUrl = async event => {
   if (event.body.snapshot) {
     debug(`Preprocessing image data: %o`, event.body.snapshot)
     const Body = binaryToBuffer(event.body.snapshot.data)
-    const Key = encodeURIComponent(`snapshot_${new Date().toISOString()}.${event.body.snapshot.type.replace('image/', '')}`)
+    const Key = encodeURIComponent(
+      `snapshot_${new Date().getTime()}.${event.body.snapshot.type.replace('image/', '')}`
+    )
     debug(`Starting to upload snapshot -> ${Bucket}/${Key} with Content %o`, Body)
     try {
       const response = await s3

@@ -5,6 +5,7 @@ plugins:
   - serverless-plugin-git-variables
   - serverless-offline
   - serverless-export-env
+  - serverless-domain-manager
 package:
   include:
     - src/**/*
@@ -18,6 +19,9 @@ provider:
   runtime: nodejs12.x
   stage: ${self:custom.serverlessBranch, self:custom.gitBranch, opt:stage, env:STAGE}
   region: ${opt:region, 'us-east-1'}
+  apiGateway:
+    binaryMediaTypes:
+      - 'multipart/form-data'
   deploymentBucket:
     name: ${self:service}-deploys
   memorySize: 512
@@ -29,7 +33,7 @@ provider:
     SLS_DEBUG: ${env:SLS_DEBUG, ''}
     REGION: ${self:provider.region}
     STAGE: ${env:STAGE, self:provider.stage}
-    AW_BASE_URL: ${self:custom.apiEndpoints.${git:branch}, self:custom.apiEndpoints.${self:provider.stage}, self:custom.resourcesStages.dev}
+    DOMAIN: octo-${self:custom.subdomain}.andresmweber.com
     AW_SLACK_URL: ${ssm:/aw/slack/octoprint~true}
     AW_BUCKET: ${self:custom.imageBucket}
     AW_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
@@ -52,6 +56,9 @@ provider:
     COVERALLS_REPO_TOKEN: ${ssm:/aw/octo-listener/coveralls~true}
     COVERALLS_GIT_BRANCH: ${self:custom.serverlessBranch, self:custom.gitBranch}
 custom:
+  subdomains:
+    master: 'api'
+  subdomain: ${self:custom.subdomains.${self:provider.stage}, ${self:provider.stage}}
   imageBucket: octoprint-listener-snapshot-${self:provider.stage}-bucket
   gitCommitLong: ${env:GIT_COMMIT_LONG, git:sha1}
   gitTags: ${env:TAGS, git:tags}
@@ -68,11 +75,12 @@ custom:
   serverlessRepoOwner: ${env:SERVERLESS_REPO_OWNER}
   serverlessCommitMessage: ${env:SERVERLESS_COMMIT_MSG}
   serverlessBuildId: ${env:SERVERLESS_BUILD_ID}
-  apiEndpoints:
-    prod: https://www.example.com/api/prod
-    dev: https://www.example.com/api/dev
-    master: https://www.example.com/api/master
-    
+  customDomain:
+    domainName: ${self:provider.environment.DOMAIN}
+    basePath: 'v1'
+    stage: ${self:provider.stage}
+    createRoute53Record: true
+
 functions:
   receiveWebhook:
     handler: src/lambdas/receiveWebhook.handler
