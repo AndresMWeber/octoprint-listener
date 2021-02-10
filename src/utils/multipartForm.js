@@ -37,7 +37,8 @@ const multi2json = (multipartData, boundary) => {
 
       try {
         ;[name, value] = parseDefault(line)
-        entry[name] = value
+        // Ensure decoded values.
+        entry[name] = JSON.parse(JSON.stringify(value))
       } catch (err) {
         try {
           ;[name, value] = parseContentType(line)
@@ -46,7 +47,7 @@ const multi2json = (multipartData, boundary) => {
           debug(`Error parsing metadata: %o`, err)
         }
       } finally {
-        debug(`Parsed metdata: %o`, entry[name])
+        debug(`Parsed metdaata: %o`, entry[name])
       }
 
       return Object.assign(o, entry)

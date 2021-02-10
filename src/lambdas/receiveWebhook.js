@@ -14,7 +14,10 @@ module.exports.handler = async (event, context, callback) => {
       /(.*); boundary=(.*)/g
     )
     debug(`Multi-part data contentType: "${contentType}" boundary: "${boundary}"`)
-
+    if (event.isBase64Encoded) {
+      debug('Body is base 64 encoded...converting from base64 to ascii string.')
+      event.body = Buffer.from(event.body, 'base64').toString('ascii')
+    }
     event.body = multi2json(event.body, boundary)
     debug(`Parsed event body: %o`, event.body)
 
@@ -25,11 +28,11 @@ module.exports.handler = async (event, context, callback) => {
       headers: { 'Content-Type': 'application/json' }
     })
     debug(`Slack: ${response.status} (${response.statusText}) - %o`, response.data)
-    
+
     debug(`Success handling event: %o`, message)
     callback(null, Responses._200({ message }))
-  } catch (err) {
-    debug(`Error handling event: %o`, event)
-    callback(null, Responses._500(err))
+  } catch (error) {
+    debug(`Error handling event: %o`, error)
+    callback(null, Responses._500({ error }))
   }
 }

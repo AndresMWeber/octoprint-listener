@@ -1,4 +1,5 @@
 const { S3 } = require('aws-sdk')
+const detectCharacterEncoding = require('detect-character-encoding')
 const { IMAGES_BUCKET: Bucket } = require('./env')
 const Debug = require('debug')
 
@@ -10,10 +11,12 @@ const binaryToBuffer = binaryData => Buffer.from(binaryData, 'binary')
 const uploadImageAndAddUrl = async event => {
   if (event.body.snapshot) {
     debug(`Preprocessing image data: %o`, event.body.snapshot)
-    const Body = binaryToBuffer(event.body.snapshot.data)
+    const Body = binaryToBuffer(event.body.snapshot.data.toString('utf8'))
     const Key = encodeURIComponent(
       `snapshot_${new Date().getTime()}.${event.body.snapshot.type.replace('image/', '')}`
     )
+    const charsetMatch = detectCharacterEncoding(Body)
+    debug(charsetMatch)
     debug(`Starting to upload snapshot -> ${Bucket}/${Key} with Content %o`, Body)
     try {
       const response = await s3

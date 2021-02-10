@@ -12,6 +12,8 @@ const MESSAGE_PAYLOAD = {
   icon_emoji: ':aws:'
 }
 
+const unixTimestampToDateString = unixTimestamp => new Date(unixTimestamp * 1e3).toISOString()
+
 const sendSlackMessage = async (payload, options) => {
   if (SLACK_URL) {
     debug(`Sending to slack webhook url: ${SLACK_URL}`)
@@ -32,17 +34,23 @@ const sendSlackMessage = async (payload, options) => {
 
 const formatOctoWebhookMessage = ({
   body: {
-    job__user: USER = '',
-    topic: TOPIC = '',
     deviceIdentifier: DEVICE = '',
-    job__file__name: FILE_NAME = '',
+    topic: TOPIC = '',
     message: MESSAGE = '',
-    progress__completion: JOB_COMPLETION = '',
-    job__estimatedPrintTime: JOB_ESTIMATED = '',
-    job__averagePrintTime: JOB_AVERAGE = '',
-    job__lastPrintTime: JOB_LAST_PRINT = '',
-    progress__printTime: TIME_PROGRESS = '',
-    progress__printTimeLeft: TIME_LEFT = ''
+    currentTime: CURRENT_TIME = '',
+    state,
+    extra,
+    job: {
+      user: USER = '',
+      lastPrintTime: JOB_LAST_PRINT = '',
+      estimatedPrintTime: JOB_ESTIMATED = '',
+      file: { name: FILE_NAME = '' }
+    },
+    progress: {
+      completion: JOB_COMPLETION = '',
+      printTime: TIME_PROGRESS = '',
+      printTimeLeft: TIME_LEFT = ''
+    }
   }
 }) => {
   debug(`Received message inputs: %o`, {
@@ -51,22 +59,25 @@ const formatOctoWebhookMessage = ({
     DEVICE,
     FILE_NAME,
     MESSAGE,
-    JOB_AVERAGE,
     JOB_COMPLETION,
     JOB_ESTIMATED,
     JOB_LAST_PRINT,
     TIME_PROGRESS,
-    TIME_LEFT
+    TIME_LEFT,
+    CURRENT_TIME,
+    extra,
+    state
   })
   return `
   🖨️${USER}@ *${DEVICE}* 👾::📜${TOPIC} 🗃️ _${FILE_NAME}_ 🗃️
+  ⏲ ${unixTimestampToDateString(CURRENT_TIME)} ⏲
+  Status(es): ${Object.keys(state.flags).filter(flag => state.flags[flag])}
 
   > ${MESSAGE}
 
   \`\`\`
   Percent Complete: ⏳ ${JOB_COMPLETION}%
   Estimated Print Time: ⏲ ${JOB_ESTIMATED}s
-  Average Print Time:  ⌛ ${JOB_AVERAGE}s
   Last Print Time: ⏱ ${JOB_LAST_PRINT}s
   Progress Print Time: ${TIME_PROGRESS}s
   Progress Print Time Left: ${TIME_LEFT}s
@@ -78,7 +89,7 @@ const formatOctoWebhookMessage = ({
 const createSlackPayload = (event, image_url) => {
   const payload = { ...MESSAGE_PAYLOAD }
   payload.text = formatOctoWebhookMessage(event)
-  
+
   if (image_url) {
     payload.attachments = [
       {

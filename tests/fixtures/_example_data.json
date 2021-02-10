@@ -1,0 +1,56 @@
+{
+  "deviceIdentifier": "Ender 3 Garage",
+  "apiSecret": "testytestapisecret",
+  "topic": "Print Progress",
+  "message": "Your print is 50 % complete.",
+  "offsets": {},
+  "meta": "",
+  "currentTime": 1613006408,
+  "extra": {
+    "name": "example.gcode",
+    "path": "example.gcode",
+    "origin": "local",
+    "size": 242038,
+    "owner": "example_user",
+    "time": 50.237335886,
+    "popup": true,
+    "hook_index": 0
+  },
+  "state": {
+    "text": "Operational",
+    "flags": {
+      "operational": true,
+      "printing": false,
+      "cancelling": false,
+      "pausing": false,
+      "resuming": false,
+      "finishing": false,
+      "closedOrError": false,
+      "error": false,
+      "paused": false,
+      "ready": true,
+      "sdReady": true
+    }
+  },
+  "job": {
+    "file": {
+      "name": null,
+      "path": null,
+      "size": null,
+      "origin": null,
+      "date": null
+    },
+    "estimatedPrintTime": null,
+    "lastPrintTime": null,
+    "filament": { "length": null, "volume": null },
+    "user": null
+  },
+  "progress": {
+    "completion": null,
+    "filepos": null,
+    "printTime": null,
+    "printTimeLeft": null,
+    "printTimeOrigin": null
+  },
+  "snapshot": { "filename": "snapshot.jpg", "data": "", "type": "image/jpeg" }
+}
